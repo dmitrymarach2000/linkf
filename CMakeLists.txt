@@ -1,0 +1,7 @@
+project(linkf)
+cmake_minimum_required(VERSION 3.1)
+set(CMAKE_C_STANDART 99)
+add_subdirectory(pcre-8.43)
+include_directories(pcre-8.43)
+add_executable(linkf main.c)
+target_link_libraries(linkf pcre)
