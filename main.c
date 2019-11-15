@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "pcre.h"
+#include <pcre.h>
 struct Token{
 	char *str;
 	int pos;
