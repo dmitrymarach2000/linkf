@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <pcre.h>
+#include <string.h>
+
 struct Token{
 	char *str;
 	int pos;
@@ -23,7 +25,7 @@ int menu(){
         	int ch;
 		printf("\n%s\n\n",pcre_version());
         	printf("1 - start\nq - exit\n>> ");
-        	if((ch = getchar()) == '1'){ start(); }
+        	if((ch = getchar()) == '1'){ printf("\n"); start(); }
         	else if(ch == 'q') { exit(0); }
         	else { printf("\nUnknown symbol!\n\n");}
         	if(ch != '\n') while (getchar() != '\n');
@@ -32,17 +34,36 @@ int menu(){
 }
 int start() {
 	FILE *i_file = fopen("../file.txt", "r");
+	int token_n = 0;
+	struct Token* tokens = (struct Token*)malloc((token_n + 1) * sizeof(struct Token));
 	if(i_file != 0){
-		int buf_len = 1;
-		char *buf_str = (char*)malloc(buf_len);
-		while(( buf_str[buf_len-1]  = fgetc(i_file)) != '\0' &&
-			buf_str[buf_len-1] != ' '  &&
-			buf_str[buf_len-1] != '\t' &&
-			buf_str[buf_len-1] != '\r' &&
-			buf_str[buf_len-1] != '\n'){
-		buf_str = realloc(buf_str, ++buf_len);
+		char ch;
+		while(( ch = getchar() ) != '\0'){
+
+			char new_wrd = 0;
+			int  buf_len = 1;
+			int  buf_pos = 1;
+			tokens[token_n].pos = buf_pos;
+			char *buf_str = (char*)malloc(buf_len * sizeof(char));
+			if(	ch != ' '  &&
+				ch != '\n' && 
+				ch != '\r' &&
+				ch != '\t'	){
+	
+				new_wrd = 1;
+				buf_str[buf_len - 1] = ch;
+				buf_str = realloc(buf_str, ++buf_len);
+
+			}else if(new_wrd){
+				buf_str[buf_len - 1] = '\0';
+				tokens[ token_n - 1].str = (char*)realloc(buf_len * sizeof(char));
+				token_n++;
+				strcpy(tokens[token_n - 1].str, buf_str);
+				free(buf_str);
+			}
+
 		}
-		printf("%s",buf_str);
 		fclose(i_file);
-	}else{printf("\nCan't open the file!\n\n");}
+
+	}else { printf("\nCan't open the file!\n\n"); }
 }
