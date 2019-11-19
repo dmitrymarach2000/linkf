@@ -38,13 +38,14 @@ int start() {
 	struct Token* tokens = (struct Token*)malloc((token_n + 1) * sizeof(struct Token));
 	if(i_file != 0){
 		char ch;
+		char new_wrd = 0;
+		int  buf_pos = 1;
+		int  buf_len = 0;
+		char *buf_str = (char*)malloc((buf_len + 1) * sizeof(char));
+
 		while(( ch = getchar() ) != '\0'){
 
-			char new_wrd = 0;
-			int  buf_len = 1;
-			int  buf_pos = 1;
 			tokens[token_n].pos = buf_pos;
-			char *buf_str = (char*)malloc(buf_len * sizeof(char));
 			if(	ch != ' '  &&
 				ch != '\n' && 
 				ch != '\r' &&
@@ -56,10 +57,17 @@ int start() {
 
 			}else if(new_wrd){
 				buf_str[buf_len - 1] = '\0';
-				tokens[ token_n - 1].str = (char*)realloc(buf_len * sizeof(char));
+				tokens[ token_n - 1].str = (char*)malloc(buf_len * sizeof(char));
 				token_n++;
 				strcpy(tokens[token_n - 1].str, buf_str);
-				free(buf_str);
+				new_wrd = 0;
+				buf_len = 0;
+				buf_str = realloc(buf_str, (buf_len + 1) * sizeof(char));
+			}
+
+			free(buf_len);
+			for(int i = 0; i < token_n; ++i){
+				printf("%d\t%s", tokens[i].pos, tokens[i].str);
 			}
 
 		}
