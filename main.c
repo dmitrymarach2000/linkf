@@ -39,35 +39,40 @@ int start() {
 	if(i_file != 0){
 		char ch;
 		char new_wrd = 0;
-		int  buf_pos = 1;
+		int  buf_pos = 0;
 		int  buf_len = 0;
 		char *buf_str = (char*)malloc((buf_len + 1) * sizeof(char));
 
-		while(( ch = getchar() ) != '\0'){
+		while(( ch = fgetc(i_file) ) != '\0'){
 
-			tokens[token_n].pos = buf_pos;
+			printf("-+%c",ch);
+			++buf_pos;
 			if(	ch != ' '  &&
 				ch != '\n' && 
 				ch != '\r' &&
 				ch != '\t'	){
 	
+				printf("\nletter\n\n");
+				if(!new_wrd){ tokens[token_n].pos = buf_pos; }
 				new_wrd = 1;
+				buf_len++;
 				buf_str[buf_len - 1] = ch;
-				buf_str = realloc(buf_str, ++buf_len);
+				buf_str = realloc(buf_str, buf_len);
 
 			}else if(new_wrd){
+				printf("\nword\n\n");
 				buf_str[buf_len - 1] = '\0';
 				tokens[ token_n - 1].str = (char*)malloc(buf_len * sizeof(char));
-				token_n++;
 				strcpy(tokens[token_n - 1].str, buf_str);
 				new_wrd = 0;
 				buf_len = 0;
 				buf_str = realloc(buf_str, (buf_len + 1) * sizeof(char));
+				token_n++;
 			}
 
 			free(buf_len);
 			for(int i = 0; i < token_n; ++i){
-				printf("%d\t%s", tokens[i].pos, tokens[i].str);
+				printf("%d\t%s\n", tokens[i].pos, tokens[i].str);
 			}
 
 		}
